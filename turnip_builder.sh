@@ -13,6 +13,8 @@ mesasrc="https://gitlab.freedesktop.org/mesa/mesa.git"
 #array of string => commit/branch;patch args
 base_patches=(
 	'disable_VK_KHR_workgroup_memory_explicit_layout;../../patches/disable_KHR_workgroup_memory_explicit_layout.patch;'
+	'improved_adreno710_support;../../patches/improved_adreno710_support.patch;'
+	'textura_patch;../../patches/textura.diff;'
 )
 experimental_patches=(
 	"force_sysmem_no_autotuner;../../patches/force_sysmem_no_autotuner.patch;"
@@ -71,15 +73,15 @@ prepare_workdir(){
 	mkdir -p "$workdir" && cd "$_"
 
 	if [ -z "${ANDROID_NDK_LATEST_HOME}" ]; then
-		if [ ! -n "$(ls -d android-ndk*)" ]; then
-			echo "Downloading android-ndk from google server (~640 MB) ..." $'\n'
-			curl https://dl.google.com/android/repository/"$ndkver"-linux.zip --output "$ndkver"-linux.zip &> /dev/null
-			###
-			echo "Exracting android-ndk to a folder ..." $'\n'
-			unzip "$ndkver"-linux.zip  &> /dev/null
-		fi
-	else	
-		echo "Using android ndk from github image"
+		export ANDROID_NDK_LATEST_HOME="/home/ubuntu/android-ndk/android-ndk-r26c"
+	fi
+
+	if [ ! -n "$(ls -d android-ndk*)" ]; then
+		echo "Downloading android-ndk from google server (~640 MB) ..." $'\n'
+		curl https://dl.google.com/android/repository/"$ndkver"-linux.zip --output "$ndkver"-linux.zip &> /dev/null
+		###
+		echo "Exracting android-ndk to a folder ..." $'\n'
+		unzip "$ndkver"-linux.zip  &> /dev/null
 	fi
 
 	if [ -z "$1" ]; then
